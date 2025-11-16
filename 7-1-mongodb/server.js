@@ -169,23 +169,60 @@
 
 import mongoose from "mongoose";
 
+const uri =
+  "mongodb+srv://fullstack:<password>@cluster0.8ux8ulo.mongodb.net/labDB?appName=Cluster0";
 // establish connection
 
+mongoose.set("strictQuery", false);
+
+mongoose
+  .connect(uri)
+  .then(() => {
+    console.log("connected to MongoDB");
+  })
+  .catch((error) => {
+    console.log("error connecting to MongoDB:", error.message);
+  });
 
 // define schema
 
+const studentSchema = new mongoose.Schema({
+  name: String,
+  age: Number,
+  major: String,
+});
+const Student = mongoose.model("Student", studentSchema);
 
 // create document
-
+async function createStudents() {
+  await Student.insertMany([
+    { name: "Ali", age: 21, major: "CS" },
+    { name: "Sara", age: 23, major: "SE" },
+  ]);
+  console.log("✅ Inserted");
+}
+createStudents();
 
 // read document
 
+async function readStudents() {
+  const all = await Student.find();
+  console.log(all);
+}
+readStudents();
 
 // update document
-
+async function updateStudent() {
+  await Student.updateOne({ name: "Ali" }, { age: 22 });
+  console.log("✅ Updated Ali");
+}
+updateStudent();
 
 // delete document
 
+async function deleteStudent() {
+  await Student.deleteOne({ name: "Sara" });
+  console.log("✅ Deleted Sara");
+}
 
-
-
+deleteStudent();
